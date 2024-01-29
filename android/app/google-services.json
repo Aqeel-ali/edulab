@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "402130676800",
+    "project_id": "edulab-2",
+    "storage_bucket": "edulab-2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402130676800:android:55663a1688dbaf891ec3a5",
+        "android_client_info": {
+          "package_name": "com.example.edulab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCX36rICcYntLYJsf8YcQi1rwJE2qLKG8c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
