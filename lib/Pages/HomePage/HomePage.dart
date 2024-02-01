@@ -139,8 +139,11 @@ Widget Card(Subject subject, var i, BuildContext context) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(11),
         ),
-        title: Text(subject.title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+        title: Text(
+          subject.title,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          maxLines: 1,
+        ),
         subtitle: Text(subject.doctorName,
             style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
         leading: CircleAvatar(

@@ -4,7 +4,7 @@ class User {
   String name;
   String email;
   String password;
-  String image;
+  String image = "";
   String id;
   String stage;
   List<Subject> userSubject = [];
@@ -13,8 +13,8 @@ class User {
     required this.name,
     required this.email,
     required this.password,
-    required this.image,
     required this.id,
+    this.image = "",
     required this.stage,
   });
 
