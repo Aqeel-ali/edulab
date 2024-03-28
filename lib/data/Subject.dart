@@ -50,7 +50,7 @@ class Subject {
   String description;
   String doctorName;
   List<Category> categories;
-  List<Document> documents; // New field
+  List<Document> documents;
   List<worksheet> worksheets;
 
   Subject(

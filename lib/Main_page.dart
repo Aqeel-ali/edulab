@@ -30,8 +30,8 @@ class MyNevBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(currentIndexProvider);
-    final thememode = ref.watch(themeModeProvider);
-    if (thememode == true) {
+    final isLigthMode = ref.watch(appThemeProvider).getTheme();
+    if (isLigthMode == true) {
       activeColor = butColor;
       inActiveColor = const Color.fromRGBO(87, 87, 87, 1);
     } else {

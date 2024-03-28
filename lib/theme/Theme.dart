@@ -26,14 +26,31 @@ class theme {
       elevation: 0,
       iconTheme: IconThemeData(color: butColor2),
     ),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all<Color>(butColor2),
+        textStyle: MaterialStateProperty.all<TextStyle>(
+          TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: Colors.white,
       selectedItemColor: butColor2,
       unselectedItemColor: butColor2,
     ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: squColor3,
+      selectionColor: squColor3,
+      selectionHandleColor: squColor2,
+    ),
     inputDecorationTheme: InputDecorationTheme(
       fillColor: Colors.white,
       filled: true,
+      floatingLabelStyle: TextStyle(color: Colors.black, fontSize: 18),
       border: OutlineInputBorder(
         borderSide: BorderSide.none,
         borderRadius: BorderRadius.circular(10),
@@ -65,11 +82,27 @@ class theme {
         backgroundColor: MaterialStateProperty.all<Color>(butColor),
       ),
     ),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all<Color>(white),
+        textStyle: MaterialStateProperty.all<TextStyle>(
+          TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    ),
     scaffoldBackgroundColor: DarkColor,
     appBarTheme: AppBarTheme(
       backgroundColor: DarkColor,
       elevation: 0,
       iconTheme: IconThemeData(color: butColor2),
+    ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: squColor3,
+      selectionColor: squColor3,
+      selectionHandleColor: squColor2,
     ),
     inputDecorationTheme: InputDecorationTheme(
       fillColor: butColor,

@@ -1,3 +1,4 @@
+import 'package:edulab/Pages/widgets/appbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:edulab/Main_page.dart';
 import 'package:edulab/Pages/widgets/CoustomerField.dart';
@@ -19,11 +20,11 @@ class LoginScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final Model = ref.watch(authViewModelProvider);
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Stack(
-          children: [
-            SingleChildScrollView(
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: SingleChildScrollView(
               child: Form(
                 key: _formKeylogin,
                 child: Column(
@@ -118,9 +119,17 @@ class LoginScreen extends ConsumerWidget {
                       },
                       onChanged: (value) => Model.password = value,
                       textInputAction: TextInputAction.next,
+                      obscureText: Model.obscurepassword,
                       decoration: InputDecoration(
                         filled: true,
                         prefixIcon: const Icon(Icons.password_outlined),
+                        suffixIcon: IconButton(
+                          icon: Icon(Model.obscurepassword
+                              ? Iconsax.eye
+                              : Iconsax.eye_slash),
+                          onPressed: () =>
+                              Model.obscurepassword = !Model.obscurepassword,
+                        ),
                         contentPadding: const EdgeInsets.all(25),
                         label: const Text(
                           "كلمة المرور",
@@ -175,14 +184,29 @@ class LoginScreen extends ConsumerWidget {
                           if (_formKeylogin.currentState!.validate()) {
                             try {
                               await Model.login();
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MyNevBar()));
+                              if (Model.user!.emailVerified) {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MyNevBar()));
+                              } else {
+                                Model.sendEmail();
+                                throw "يرجى التحقق من بريدك الالكتروني والضغط على الرابط لتفعيل حسابك";
+                              }
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(e.toString()),
+                                  dismissDirection: DismissDirection.horizontal,
+                                  behavior: SnackBarBehavior.floating,
+                                  backgroundColor: Colors.red,
+                                  content: Text(
+                                    e.toString(),
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ),
                               );
                             }
@@ -244,67 +268,66 @@ class LoginScreen extends ConsumerWidget {
                       height: 20,
                     ),
                     Center(
-                        child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        const Text(
-                          "اليس لديك حساب ؟",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Register()));
-                          },
-                          child: Text(
-                            "سجل الان",
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          const Text(
+                            "اليس لديك حساب ؟",
                             style: TextStyle(
-                                color: squColor3,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18),
+                              fontSize: 18,
+                              fontWeight: FontWeight.normal,
+                            ),
                           ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Register()));
+                            },
+                            child: Text(
+                              "سجل الان",
+                              style: TextStyle(
+                                  color: squColor3,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Center(
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MyNevBar()));
+                        },
+                        child: Text(
+                          "تخطي",
+                          style: TextStyle(
+                              color: squColor3,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18),
                         ),
-                      ],
-                    ))
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-            Model.loading
-                ? const Center(
+          ),
+          Model.loading
+              ? Container(
+                  color: Colors.black.withOpacity(0.5),
+                  child: const Center(
                     child: CircularProgressIndicator(),
-                  )
-                : const SizedBox(),
-          ],
-        ),
+                  ),
+                )
+              : const SizedBox(),
+        ],
       ),
     );
   }
-}
-
-void _showDialog(BuildContext context, String title, String subtitle) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text("$title!!", textAlign: TextAlign.center),
-        content: Text("$subtitle!", textAlign: TextAlign.center),
-        actions: <Widget>[
-          TextButton(
-            child: Text(
-              "OK",
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
 }

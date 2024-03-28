@@ -15,7 +15,7 @@ class SubjectPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final subject = ref.watch(SubjectProvider)[i];
-    final thememode = ref.watch(themeModeProvider);
+    final isLigthMode = ref.watch(appThemeProvider).getTheme();
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(),
@@ -82,7 +82,7 @@ class SubjectPage extends ConsumerWidget {
                             subject.categories[index].image,
                             context,
                             subject,
-                            thememode))),
+                            isLigthMode))),
               ],
             ),
           ),

@@ -119,43 +119,39 @@ var SearchField = TextFormField(
 Widget Card(Subject subject, var i, BuildContext context) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
-    child: SizedBox(
-      height: 100,
-      child: ListTile(
-        horizontalTitleGap: 20,
-        minVerticalPadding: 30,
-        visualDensity: const VisualDensity(vertical: 4),
-        minLeadingWidth: 80,
-        trailing: const Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(
-              size: 35,
-              Iconsax.arrow_left_2,
-            ),
-          ],
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(11),
-        ),
-        title: Text(
-          subject.title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-          maxLines: 1,
-        ),
-        subtitle: Text(subject.doctorName,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
-        leading: CircleAvatar(
-          maxRadius: 35,
-          child: Image.asset(subject.image),
-        ),
-        onLongPress: () {},
-        onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => SubjectPage(i: i)));
-        },
+    child: ListTile(
+      horizontalTitleGap: 20,
+      minVerticalPadding: 30,
+      visualDensity: const VisualDensity(vertical: 4),
+      minLeadingWidth: 80,
+      trailing: const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            size: 35,
+            Iconsax.arrow_left_2,
+          ),
+        ],
       ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(11),
+      ),
+      title: Text(
+        subject.title,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+      ),
+      subtitle: Text(subject.doctorName,
+          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+      leading: CircleAvatar(
+        maxRadius: 35,
+        child: Image.asset(subject.image),
+      ),
+      onLongPress: () {},
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => SubjectPage(i: i)));
+      },
     ),
   );
 }

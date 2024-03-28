@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Pages/splash&onboarding_Screens/splashPage.dart';
 import 'theme/theme.dart';
@@ -10,7 +11,11 @@ import 'theme/theme_manager.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-void main() async {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // initialization SharedPreferences
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: FirebaseOptions(
@@ -20,7 +25,13 @@ void main() async {
       projectId: 'edulab-5171e',
     ),
   );
-  runApp(ProviderScope(child: const MyApp()));
+  return runApp(ProviderScope(
+    // override SharedPreferences provider with correct value
+    overrides: [
+      sharedPreferencesProvider.overrideWithValue(prefs),
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends ConsumerWidget {
@@ -28,11 +39,11 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final thememode = ref.watch(themeModeProvider);
+    final bool isLigthMode = ref.watch(appThemeProvider).getTheme();
 
-    print(thememode);
+    print(isLigthMode);
     return MaterialApp(
-      themeMode: thememode ? ThemeMode.light : ThemeMode.dark,
+      themeMode: isLigthMode ? ThemeMode.light : ThemeMode.dark,
       theme: theme().lightTheme,
       darkTheme: theme().darkTheme,
       debugShowCheckedModeBanner: false,

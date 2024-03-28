@@ -1,3 +1,4 @@
+import 'package:edulab/Pages/login&singUp/emailVerifyPage.dart';
 import 'package:edulab/Pages/login&singUp/providers/auth_view_model_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:edulab/Pages/widgets/CoustomerField.dart';
@@ -20,11 +21,11 @@ class Register extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final Model = ref.watch(authViewModelProvider);
     return Scaffold(
-        body: Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Stack(
-        children: [
-          SingleChildScrollView(
+        body: Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: SingleChildScrollView(
             child: Form(
               key: _formKey,
               child: Column(
@@ -152,9 +153,17 @@ class Register extends ConsumerWidget {
                     },
                     validator: (value) => Model.validatePassword(value!),
                     textInputAction: TextInputAction.next,
+                    obscureText: Model.obscurepassword,
                     decoration: InputDecoration(
                       filled: true,
                       prefixIcon: const Icon(Icons.password_outlined),
+                      suffixIcon: IconButton(
+                        icon: Icon(Model.obscurepassword
+                            ? Iconsax.eye
+                            : Iconsax.eye_slash),
+                        onPressed: () =>
+                            Model.obscurepassword = !Model.obscurepassword,
+                      ),
                       contentPadding: const EdgeInsets.all(25),
                       label: const Text(
                         "كلمة المرور",
@@ -183,9 +192,19 @@ class Register extends ConsumerWidget {
                       onChanged: (value) {
                         Model.confirmPassword = value;
                       },
+                      validator: (value) =>
+                          Model.validateConfirmPassword(value!),
+                      obscureText: Model.obscureconfirmPassword,
                       textInputAction: TextInputAction.next,
                       decoration: InputDecoration(
                         filled: true,
+                        suffixIcon: IconButton(
+                          icon: Icon(Model.obscureconfirmPassword
+                              ? Iconsax.eye
+                              : Iconsax.eye_slash),
+                          onPressed: () => Model.obscureconfirmPassword =
+                              !Model.obscureconfirmPassword,
+                        ),
                         prefixIcon: const Icon(Icons.password_outlined),
                         contentPadding: const EdgeInsets.all(25),
                         label: const Text(
@@ -298,57 +317,46 @@ class Register extends ConsumerWidget {
               ),
             ),
           ),
-          Model.loading
-              ? const Center(
+        ),
+        Model.loading
+            ? Container(
+                color: Colors.black.withOpacity(0.5),
+                child: const Center(
                   child: CircularProgressIndicator(),
-                )
-              : const SizedBox(),
-        ],
-      ),
+                ),
+              )
+            : const SizedBox(),
+      ],
     ));
   }
 
   void _validateAndSubmit(BuildContext context, WidgetRef ref) async {
     final Model = ref.read(authViewModelProvider);
     if (_formKey.currentState!.validate()) {
-      if (passwordController.text == confirmPasswordController.text) {
-        try {
-          Model.loading = true;
-          await Model.signup();
-          Model.loading = false;
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => LoginScreen()));
-        } catch (e) {
-          Model.loading = false;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(e.toString()),
+      try {
+        Model.loading = true;
+        await Model.signup();
+        Model.loading = false;
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => EmailVerify()));
+      } catch (e) {
+        Model.loading = false;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            dismissDirection: DismissDirection.horizontal,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+            content: Text(
+              e.toString(),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
-          );
-        }
-      } else {
-        _showDialog(context, "Error", "Password not match");
+          ),
+        );
       }
     }
   }
-}
-
-void _showDialog(BuildContext context, String title, String subtitle) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text("$title!!"),
-        content: Text("$subtitle!"),
-        actions: <Widget>[
-          TextButton(
-            child: const Text("OK"),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
 }

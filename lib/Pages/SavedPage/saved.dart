@@ -13,7 +13,7 @@ class SavedFile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final downloadFile = ref.watch(DownloadedDocProvider);
     final sliding = ref.watch(_slidingProvider);
-    final thememode = ref.watch(themeModeProvider);
+    final isLigthMode = ref.watch(appThemeProvider).getTheme();
 
     final subject = ref.read(SubjectProvider);
     return Scaffold(
@@ -57,7 +57,7 @@ class SavedFile extends ConsumerWidget {
                         ? ListView.builder(
                             itemCount: downloadFile.length,
                             itemBuilder: (context, index) =>
-                                Card(downloadFile[index], index, thememode))
+                                Card(downloadFile[index], index, isLigthMode))
                         : ListView.builder(
                             itemCount: subject.length,
                             itemBuilder: (context, index) =>

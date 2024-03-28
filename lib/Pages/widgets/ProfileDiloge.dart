@@ -1,17 +1,20 @@
+import 'package:edulab/Pages/login&singUp/providers/auth_view_model_provider.dart';
 import 'package:edulab/theme/Theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../theme/theme_manager.dart';
+import '../login&singUp/login.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final thememode = ref.watch(themeModeProvider);
+    final bool isLigthMode = ref.watch(appThemeProvider).getTheme();
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
@@ -63,7 +66,7 @@ class ProfilePage extends ConsumerWidget {
                       child: Container(
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: thememode ? Colors.white : butColor),
+                            color: isLigthMode ? Colors.white : butColor),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
@@ -127,11 +130,11 @@ class ProfilePage extends ConsumerWidget {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Switch(
-                                      value: thememode,
-                                      onChanged: (value) {
+                                      value: isLigthMode,
+                                      onChanged: (value) async {
                                         ref
-                                            .read(themeModeProvider.notifier)
-                                            .state = value;
+                                            .read(appThemeProvider.notifier)
+                                            .setTheme(value);
                                       },
                                       activeTrackColor: ScoColor2,
                                       activeColor: squColor3,
@@ -175,7 +178,43 @@ class ProfilePage extends ConsumerWidget {
                                       color: Colors.red,
                                     )),
                                 onLongPress: () {},
-                                onTap: () {},
+                                onTap: () async {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text("تسجيل الخروج"),
+                                      content: const Text(
+                                          "هل انت متاكد من تسجيل الخروج ؟"),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () async {
+                                            await ref
+                                                .read(authViewModelProvider)
+                                                .logout();
+                                            // go to login page
+                                            Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const LoginScreen()));
+                                          },
+                                          child: Text(
+                                            "نعم",
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                            ),
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text("لا"),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
                               // About
                               ListTile(

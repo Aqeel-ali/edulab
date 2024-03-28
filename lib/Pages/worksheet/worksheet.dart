@@ -11,7 +11,7 @@ class WorkSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final worksheet = ref.read(allWorkSheetProvider);
-    final thememode = ref.watch(themeModeProvider);
+    final isLigthMode = ref.watch(appThemeProvider).getTheme();
     worksheet.sort((a, b) => a.date.compareTo(b.date));
 
     //sort the worksheet by date
@@ -53,7 +53,7 @@ class WorkSheet extends ConsumerWidget {
               child: ListView.builder(
                   itemCount: worksheet.length,
                   itemBuilder: (context, index) =>
-                      Card2(worksheet[index], context, thememode)),
+                      Card2(worksheet[index], context, isLigthMode)),
             ),
           ]),
         ),

@@ -11,6 +11,10 @@ final authViewModelProvider = ChangeNotifierProvider<AuthViewModelP>((ref) {
 class AuthViewModelP extends ChangeNotifier {
   FirebaseAuth _auth = FirebaseAuth.instance;
 
+  User? get user => _auth.currentUser;
+
+  Stream<User?> get userStream => _auth.authStateChanges();
+
   String _email = '';
   String _password = '';
   String _name = '';
@@ -20,6 +24,8 @@ class AuthViewModelP extends ChangeNotifier {
   String get password => _password;
   String get name => _name;
   String get confirmPassword => _confirmPassword;
+  bool _obscurepassword = true;
+  bool _obscureconfirmPassword = true;
 
   set email(String value) => _email = value;
   set name(String value) => _name = value;
@@ -40,6 +46,18 @@ class AuthViewModelP extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool get obscureconfirmPassword => _obscureconfirmPassword;
+  set obscureconfirmPassword(bool value) {
+    _obscureconfirmPassword = value;
+    notifyListeners();
+  }
+
+  bool get obscurepassword => _obscurepassword;
+  set obscurepassword(bool value) {
+    _obscurepassword = value;
+    notifyListeners();
+  }
+
   String? validateEmail(String value) {
     final String format =
         r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$";
@@ -56,6 +74,16 @@ class AuthViewModelP extends ChangeNotifier {
     }
     if (value.length < 6) {
       return 'ادخل كلمة مرور اكثر من 6 احرف';
+    }
+    return null;
+  }
+
+  String? validateConfirmPassword(String value) {
+    if (value.isEmpty) {
+      return 'ادخل كلمة المرور';
+    }
+    if (value != password) {
+      return 'كلمة المرور غير متطابقة';
     }
     return null;
   }
@@ -85,11 +113,8 @@ class AuthViewModelP extends ChangeNotifier {
       } else if (e.code == "user-not-found") {
         return Future.error("البريد الالكتروني غير موجود");
       } else {
-        return Future.error(e.message ?? "حدث خطأ ما");
+        return Future.error("حدث خطأ ما");
       }
-    } catch (e) {
-      loading = false;
-      if (kDebugMode) print(e);
     }
     loading = false;
   }
@@ -99,6 +124,7 @@ class AuthViewModelP extends ChangeNotifier {
     try {
       await _auth.createUserWithEmailAndPassword(
           email: _email, password: _password);
+      sendEmail();
       _loading = false;
     } on FirebaseException catch (e) {
       loading = false;
@@ -115,5 +141,19 @@ class AuthViewModelP extends ChangeNotifier {
       print(e);
     }
     loading = false;
+  }
+
+  //logout
+  Future<void> logout() async {
+    await _auth.signOut();
+  }
+
+  Future<void> reload() async {
+    await _auth.currentUser!.reload();
+    notifyListeners();
+  }
+
+  void sendEmail() {
+    _auth.currentUser!.sendEmailVerification();
   }
 }
