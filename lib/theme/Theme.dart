@@ -8,7 +8,7 @@ Color primColor = Color.fromRGBO(240, 240, 240, 1);
 Color white = Color.fromRGBO(255, 255, 255, 1);
 
 Color ScoColor = Color.fromRGBO(190, 190, 190, 1);
-Color ScoColor2 = Color.fromRGBO(184, 184, 184, 1);
+Color scoColor2 = Color.fromRGBO(184, 184, 184, 1);
 Color butColor = Color.fromRGBO(47, 47, 49, 1);
 Color butColor2 = Color.fromRGBO(53, 52, 52, 1);
 Color squColor2 = Color.fromRGBO(168, 183, 212, 1);
@@ -72,6 +72,9 @@ class theme {
     ),
     fontFamily: "tajawal",
     useMaterial3: true,
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: butColor2,
+    ),
   );
 
   // dark theme
@@ -138,5 +141,9 @@ class theme {
     brightness: Brightness.dark,
     fontFamily: 'tajawal',
     useMaterial3: true,
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: butColor2,
+      foregroundColor: Colors.white,
+    ),
   );
 }

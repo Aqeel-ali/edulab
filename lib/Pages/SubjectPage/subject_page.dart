@@ -9,12 +9,11 @@ import '../../theme/theme_manager.dart';
 // make subject page
 
 class SubjectPage extends ConsumerWidget {
-  final int i;
-  const SubjectPage({required this.i, super.key});
+  final Subject sub;
+  const SubjectPage({required this.sub, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final subject = ref.watch(SubjectProvider)[i];
     final isLigthMode = ref.watch(appThemeProvider).getTheme();
     return Scaffold(
       appBar: AppBar(
@@ -35,7 +34,7 @@ class SubjectPage extends ConsumerWidget {
                 SizedBox(
                   width: 300,
                   child: Text(
-                    subject.title,
+                    sub.title,
                     style: const TextStyle(
                         fontSize: 40, fontWeight: FontWeight.bold),
                     maxLines: 2,
@@ -67,7 +66,7 @@ class SubjectPage extends ConsumerWidget {
                   ),
                 ),
                 Text(
-                  subject.doctorName,
+                  sub.doctorName,
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.w600),
                 ),
@@ -76,12 +75,12 @@ class SubjectPage extends ConsumerWidget {
                 ),
                 Wrap(
                     children: List.generate(
-                        subject.categories.length,
-                        (index) => Card(
-                            subject.categories[index].title,
-                            subject.categories[index].image,
+                        categorys.length,
+                        (index) => mycard(
+                            categorys[index].title,
+                            categorys[index].image,
                             context,
-                            subject,
+                            sub,
                             isLigthMode))),
               ],
             ),
@@ -92,7 +91,7 @@ class SubjectPage extends ConsumerWidget {
   }
 }
 
-Widget Card(
+Widget mycard(
     String subName, String imgsup, BuildContext c, Subject s, bool thememode) {
   return Container(
       width: (MediaQuery.of(c).size.width) / 2 - 30,

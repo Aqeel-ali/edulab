@@ -1,11 +1,11 @@
 import 'package:edulab/Pages/login&singUp/providers/auth_view_model_provider.dart';
+import 'package:edulab/data/UsersModel.dart';
+
 import 'package:edulab/theme/Theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
-
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../theme/theme_manager.dart';
 import '../login&singUp/login.dart';
 
@@ -15,6 +15,8 @@ class ProfilePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool isLigthMode = ref.watch(appThemeProvider).getTheme();
+    final model = ref.read(authViewModelProvider);
+
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
@@ -41,8 +43,8 @@ class ProfilePage extends ConsumerWidget {
                     const SizedBox(
                       height: 10,
                     ),
-                    const Text(
-                      "اسم المستخدم",
+                    Text(
+                      model.name,
                       style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
@@ -51,8 +53,8 @@ class ProfilePage extends ConsumerWidget {
                     const SizedBox(
                       height: 5,
                     ),
-                    const Text(
-                      "aqee@gmail.com",
+                    Text(
+                      model.email,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.normal,
@@ -136,7 +138,7 @@ class ProfilePage extends ConsumerWidget {
                                             .read(appThemeProvider.notifier)
                                             .setTheme(value);
                                       },
-                                      activeTrackColor: ScoColor2,
+                                      activeTrackColor: scoColor2,
                                       activeColor: squColor3,
                                     ),
                                   ],

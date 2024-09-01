@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -10,24 +11,30 @@ final authViewModelProvider = ChangeNotifierProvider<AuthViewModelP>((ref) {
 
 class AuthViewModelP extends ChangeNotifier {
   FirebaseAuth _auth = FirebaseAuth.instance;
+  final db = FirebaseFirestore.instance;
 
   User? get user => _auth.currentUser;
 
   Stream<User?> get userStream => _auth.authStateChanges();
-
+  String _uid = '';
   String _email = '';
   String _password = '';
   String _name = '';
   String _confirmPassword = '';
+  String _role = '';
 
+  String get role => _role;
   String get email => _email;
+  String get uid => _uid;
   String get password => _password;
   String get name => _name;
   String get confirmPassword => _confirmPassword;
   bool _obscurepassword = true;
   bool _obscureconfirmPassword = true;
 
+  set role(String value) => _role = value;
   set email(String value) => _email = value;
+  set uid(String value) => _uid = value;
   set name(String value) => _name = value;
   set password(String value) {
     _password = value;
@@ -102,8 +109,18 @@ class AuthViewModelP extends ChangeNotifier {
   Future<void> login() async {
     loading = true;
     try {
-      await _auth.signInWithEmailAndPassword(
-          email: _email, password: _password);
+      await _auth
+          .signInWithEmailAndPassword(email: _email, password: _password)
+          .then((result) {
+        _uid = result.user!.uid;
+        //fetch user data from firestore
+        db.collection('Users').doc(result.user!.uid).get().then((value) {
+          _name = value['name'];
+          _email = value['email'];
+          _password = value['password'];
+          _role = value['role'];
+        });
+      });
       _loading = false;
     } on FirebaseException catch (e) {
       print(e.code);
@@ -122,8 +139,20 @@ class AuthViewModelP extends ChangeNotifier {
   Future<void> signup() async {
     loading = true;
     try {
-      await _auth.createUserWithEmailAndPassword(
-          email: _email, password: _password);
+      _auth
+          .createUserWithEmailAndPassword(email: _email, password: _password)
+          .then((result) {
+        print("start-------------------------------");
+
+        db.collection('Users').doc(result.user!.uid).set({
+          'name': _name,
+          'email': _email,
+          'password': _password,
+          'role': 'user',
+          'date of registration': DateTime.now().toString()
+        }).then((value) => print(
+            "Adding user to firestore is done successfully with id: ${result.user!.uid}"));
+      });
       sendEmail();
       _loading = false;
     } on FirebaseException catch (e) {
@@ -146,6 +175,11 @@ class AuthViewModelP extends ChangeNotifier {
   //logout
   Future<void> logout() async {
     await _auth.signOut();
+    //delete user data from provider
+    _name = '';
+    _email = '';
+    _password = '';
+    _role = '';
   }
 
   Future<void> reload() async {

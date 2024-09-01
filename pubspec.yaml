@@ -49,6 +49,14 @@ dependencies:
   firebase_auth: ^4.16.0
   google_sign_in: ^6.1.6
   shared_preferences: ^2.2.2
+  
+  shimmer: ^3.0.0
+  cached_network_image: ^3.3.1
+  file_picker: ^8.0.0+1
+  easy_pdf_viewer: ^1.0.8
+  flutter_file_view: ^2.2.1
+  open_filex: ^4.4.0
+
 
 
 dev_dependencies:

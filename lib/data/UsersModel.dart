@@ -1,30 +1,31 @@
 import 'package:edulab/data/Subject.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class User {
+class myUser {
   String name;
   String email;
   String password;
   String image = "";
   String id;
-  String stage;
+  String role;
   List<Subject> userSubject = [];
 
-  User({
+  myUser({
     required this.name,
     required this.email,
     required this.password,
     required this.id,
     this.image = "",
-    required this.stage,
+    this.role = "user",
   });
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
+  factory myUser.fromJson(Map<String, dynamic> json) => myUser(
         name: json['name'],
         email: json['email'],
         password: json['password'],
         image: json['image'],
         id: json['id'],
-        stage: json['stage'],
+        role: json['role'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -33,6 +34,16 @@ class User {
         'password': password,
         'image': image,
         'id': id,
-        'stage': stage,
+        'role': role,
       };
 }
+
+//create provider for main user
+final userProvider = StateProvider<myUser>((ref) {
+  return myUser(
+    name: "",
+    email: "",
+    password: "",
+    id: "",
+  );
+});

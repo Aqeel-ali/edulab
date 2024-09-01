@@ -1,20 +1,27 @@
+import 'dart:math';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:edulab/Pages/SubjectPage/subject_page.dart';
 import 'package:edulab/data/Subject.dart';
 
 import 'package:edulab/Pages/widgets/ProfileDiloge.dart';
+import 'package:edulab/theme/Theme.dart';
+
+import 'package:edulab/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:shimmer/shimmer.dart';
 
 var searchController;
 var subcount;
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final subject = ref.read(SubjectProvider);
-
+    final theme = ref.watch(appThemeProvider).getTheme();
     return Scaffold(
       appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -69,11 +76,68 @@ class HomePage extends ConsumerWidget {
                 ]),
               ),
               Expanded(
-                child: ListView.builder(
-                  itemCount: subject.length,
-                  itemBuilder: (context, index) =>
-                      Card(subject[index], index, context),
-                ),
+                child: Card(
+                    child: FutureBuilder(
+                  future: get_subjects(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final data = snapshot.data as List<Subject>;
+                      return ListView.builder(
+                          itemCount: data.length,
+                          itemBuilder: (context, index) =>
+                              mycard(data[index], index, context, theme));
+                    } else if (snapshot.hasError) {
+                      return Text("${snapshot.error}");
+                    } else {
+                      return Center(
+                          child: Shimmer(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color.fromARGB(255, 87, 87, 87),
+                            theme ? Colors.white : butColor
+                          ],
+                        ),
+                        child: ListView.builder(
+                          itemCount: 5,
+                          itemBuilder: (context, index) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ListTile(
+                              horizontalTitleGap: 20,
+                              minVerticalPadding: 30,
+                              visualDensity: const VisualDensity(vertical: 4),
+                              minLeadingWidth: 80,
+                              trailing: const Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    size: 35,
+                                    Iconsax.arrow_left_2,
+                                  ),
+                                ],
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(11),
+                              ),
+                              title: const Text(
+                                "_________________________",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500),
+                              ),
+                              subtitle: const Text("_________________",
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500)),
+                              leading: const CircleAvatar(
+                                maxRadius: 35,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ));
+                    }
+                  },
+                )),
               ),
             ],
           ),
@@ -116,7 +180,7 @@ var SearchField = TextFormField(
       ),
     ));
 
-Widget Card(Subject subject, var i, BuildContext context) {
+Widget mycard(Subject subject, var i, BuildContext context, bool theme) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: ListTile(
@@ -144,13 +208,35 @@ Widget Card(Subject subject, var i, BuildContext context) {
       subtitle: Text(subject.doctorName,
           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
       leading: CircleAvatar(
-        maxRadius: 35,
-        child: Image.asset(subject.image),
-      ),
+          maxRadius: 35,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              CachedNetworkImage(
+                imageUrl: subject.image,
+                placeholder: (context, url) => Shimmer(
+                  child: CircleAvatar(
+                    maxRadius: 35,
+                  ),
+                  gradient: LinearGradient(
+                    colors: [
+                      Color.fromARGB(255, 87, 87, 87),
+                      theme ? Colors.white : butColor
+                    ],
+                  ),
+                ),
+                errorWidget: (context, url, error) => new Icon(Icons.error),
+              ),
+            ],
+          )),
       onLongPress: () {},
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => SubjectPage(i: i)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SubjectPage(
+                      sub: subject,
+                    )));
       },
     ),
   );

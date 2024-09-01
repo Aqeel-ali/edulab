@@ -1,7 +1,8 @@
-import 'package:edulab/Pages/widgets/appbar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:edulab/data/Subject.dart';
+import 'package:edulab/data/UsersModel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:edulab/Main_page.dart';
-import 'package:edulab/Pages/widgets/CoustomerField.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../theme/Theme.dart';
@@ -12,6 +13,7 @@ import 'signUp.dart';
 final TextEditingController emailController = TextEditingController();
 final TextEditingController passwordController = TextEditingController();
 final _formKeylogin = GlobalKey<FormState>();
+final db = FirebaseFirestore.instance;
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -19,6 +21,8 @@ class LoginScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final Model = ref.watch(authViewModelProvider);
+    final myuser = ref.read(userProvider);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -185,6 +189,8 @@ class LoginScreen extends ConsumerWidget {
                             try {
                               await Model.login();
                               if (Model.user!.emailVerified) {
+                                //save user data in userProvider
+
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
@@ -201,7 +207,7 @@ class LoginScreen extends ConsumerWidget {
                                   backgroundColor: Colors.red,
                                   content: Text(
                                     e.toString(),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,

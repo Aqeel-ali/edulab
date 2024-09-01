@@ -17,12 +17,13 @@ Future<void> main() async {
   // initialization SharedPreferences
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
+  Firebase.initializeApp(
     options: FirebaseOptions(
       apiKey: "AIzaSyCW3e-Za2_CsFZ4j6wffm1yUhDVfB3v9-s",
       appId: '1:210215542435:android:9dad9053f465c61f6a6916',
       messagingSenderId: '210215542435',
       projectId: 'edulab-5171e',
+      storageBucket: "gs://edulab-5171e.appspot.com",
     ),
   );
   return runApp(ProviderScope(
